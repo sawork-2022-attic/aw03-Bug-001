@@ -11,7 +11,20 @@ public class Cart {
     private List<Item> items = new ArrayList<>();
 
     public boolean addItem(Item item) {
-        return items.add(item);
+        try {
+            return items.add(item);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean delItem(int index) {
+        try {
+            items.remove(index);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -32,5 +45,19 @@ public class Cart {
         stringBuilder.append("Total...\t\t\t" + total );
 
         return stringBuilder.toString();
+    }
+
+    public double total() {
+        double total = 0;
+
+        for (int i = 0; i < items.size(); i++) {
+            total += items.get(i).getQuantity() * items.get(i).getProduct().getPrice();
+        }
+
+        return total;
+    }
+
+    public void clear() {
+        items.clear();
     }
 }
