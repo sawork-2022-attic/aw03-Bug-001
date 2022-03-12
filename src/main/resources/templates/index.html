@@ -114,9 +114,9 @@
 		<figcaption class="info-wrap">
 			<a href="#" class="title"><span th:text="${product.name}"></span></a>
 			<div class="action-wrap">
-				<a href="#" class="btn btn-primary btn-sm float-right"> <i class="fa fa-cart-plus"></i> Add </a>
+				<a th:href="@{/add/{id}(id=${product.id})}" class="btn btn-primary btn-sm float-right"> <i class="fa fa-cart-plus"></i> Add </a>
 				<div class="price-wrap h5">
-					<span class="price-new">$1280</span>
+                    <span th:utext="${'&#36;'}" ></span><span th:text="${product.price}"></span>
 				</div> <!-- price-wrap.// -->
 			</div> <!-- action-wrap -->
 		</figcaption>
@@ -152,15 +152,18 @@
 	</td>
 	<td class="text-center"> 
 		<div class="m-btn-group m-btn-group--pill btn-group mr-2" role="group" aria-label="...">
-																		<button type="button"
+                                                                        <form action="#" th:action="@{/minus/{index}(index=${itemStat.index})}" method="post">
+																		    <button type="submit" value="Submit"
                                                                                 class="m-btn btn btn-default"><i
-                                                                                class="fa fa-minus"></i></button>
-																		<button type="button"
-                                                                                class="m-btn btn btn-default"
-                                                                                disabled><span th:text="${item.quantity}"></span></button>
-																		<button type="button"
-                                                                                class="m-btn btn btn-default"><i
-                                                                                class="fa fa-plus"></i></button>
+                                                                                class="fa fa-minus"></i></button></form>
+                                                                        <form action="#">
+																		    <button type="button"
+                                                                                    class="m-btn btn btn-default"
+                                                                                    disabled><span th:text="${item.quantity}"></span></button></form>
+                                                                        <form action="#" th:action="@{/plus/{index}(index=${itemStat.index})}" method="post">
+																		    <button type="submit" value="Submit"
+                                                                                    class="m-btn btn btn-default"><i
+                                                                                    class="fa fa-plus"></i></button></form>
 																	</div>
 	</td>
 	<td> 
@@ -169,7 +172,7 @@
 		</div> <!-- price-wrap .// -->
 	</td>
 	<td class="text-right"> 
-	<a href="" class="btn btn-outline-danger"> <i class="fa fa-trash"></i></a>
+	<a th:href="@{/del/{index}(index=${itemStat.index})}" class="btn btn-outline-danger"> <i class="fa fa-trash"></i></a>
 	</td>
 </tr>
 </tbody>
@@ -179,27 +182,29 @@
                 <div class="box">
                     <dl class="dlist-align">
                         <dt>Tax:</dt>
-                        <dd class="text-right">12%</dd>
+                        <dd class="text-right"><span th:text="${tax*100}+'%'"></span></dd>
                     </dl>
                     <dl class="dlist-align">
                         <dt>Discount:</dt>
-                        <dd class="text-right"><a href="#">0%</a></dd>
+                        <dd class="text-right"><a href="#"><span th:text="${discount*100}+'%'"></span></a></dd>
                     </dl>
                     <dl class="dlist-align">
                         <dt>Sub Total:</dt>
-                        <dd class="text-right">$215</dd>
+                        <dd class="text-right"><span th:utext="${'&#36;'}" ></span><span th:text="${#numbers.formatDecimal(cart.total(),1,2)}"></span></dd>
                     </dl>
                     <dl class="dlist-align">
                         <dt>Total:</dt>
-                        <dd class="text-right h4 b"> $215</dd>
+                        <dd class="text-right h4 b">
+                            <span th:utext="${'&#36;'}" ></span><span th:text="${#numbers.formatDecimal(cart.total()*(1+tax)*(1-discount),1,2)}"></span>
+                        </dd>
                     </dl>
                     <div class="row">
                         <div class="col-md-6">
-                            <a href="#" class="btn  btn-default btn-error btn-lg btn-block"><i
+                            <a href="javascript:void(0);" onclick="confirmCancel()" class="btn  btn-default btn-error btn-lg btn-block"><i
                                     class="fa fa-times-circle "></i> Cancel </a>
                         </div>
                         <div class="col-md-6">
-                            <a href="#" class="btn  btn-primary btn-lg btn-block"><i class="fa fa-shopping-bag"></i>
+                            <a href="javascript:void(0);" onclick="confirmCharge()" class="btn  btn-primary btn-lg btn-block"><i class="fa fa-shopping-bag"></i>
                                 Charge </a>
                         </div>
                     </div>
@@ -226,6 +231,28 @@
         $("#cart").height(445);
         $("#cart").overlayScrollbars({});
     });
+
+    function confirmCancel() {
+        const ret = confirm("Are you sure you want to cancel this order?");
+        if (ret === true) {
+            const httpRequest = new XMLHttpRequest();
+            httpRequest.open('POST', '/cancel', true);
+            httpRequest.send();
+            alert("Successfully canceled");
+            location.reload();
+        }
+    }
+
+    function confirmCharge() {
+        const ret = confirm("Are you sure you want to pay now?");
+        if (ret === true) {
+            const httpRequest = new XMLHttpRequest();
+            httpRequest.open('POST', '/charge', true);
+            httpRequest.send();
+            alert("Successfully paid!");
+            location.reload();
+        }
+    }
 </script>
 </body>
 </html>

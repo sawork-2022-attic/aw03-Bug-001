@@ -1,6 +1,7 @@
 package com.example.webpos.biz;
 
 import com.example.webpos.model.Cart;
+import com.example.webpos.model.Item;
 import com.example.webpos.model.Product;
 
 import java.util.List;
@@ -10,15 +11,19 @@ public interface PosService {
 
     public Cart newCart();
 
-    public double checkout(Cart cart);
+    public Cart saveCart(Cart cart);
 
-    public double total(Cart cart);
+    public double checkout();
 
-    public boolean add(Product product, int amount);
+    public double total();
 
-    public boolean add(String productId, int amount);
+    public boolean add(String productId);
 
-    public boolean del(int index);
+    public boolean inc(int itemIndex);
+
+    public boolean dec(int itemIndex);
+
+    public boolean del(int itemIndex);
 
     public List<Product> products();
 }

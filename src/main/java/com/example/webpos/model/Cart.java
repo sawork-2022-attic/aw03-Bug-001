@@ -12,6 +12,11 @@ public class Cart {
 
     public boolean addItem(Item item) {
         try {
+            for (int i = 0; i < items.size(); ++i) {
+                if (items.get(i).getProduct().equals(item.getProduct())) {
+                    return this.itemInc(i);
+                }
+            }
             return items.add(item);
         } catch (Exception e) {
             return false;
@@ -21,6 +26,30 @@ public class Cart {
     public boolean delItem(int index) {
         try {
             items.remove(index);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean itemInc(int index) {
+        try {
+            Item item = items.get(index);
+            item.setQuantity(item.getQuantity() + 1);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean itemDec(int index) {
+        try {
+            Item item = items.get(index);
+            int qtt = item.getQuantity();
+            if (qtt <= 1) {
+                this.delItem(index);
+            }
+            item.setQuantity(qtt - 1);
             return true;
         } catch (Exception e) {
             return false;
